@@ -1,0 +1,73 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+string hex_to_string(string hex) {
+    string result;
+    for (int i = 0; i < hex.length(); i += 2) {
+        string byte = hex.substr(i, 2);
+        char chr = (char)(int)strtol(byte.c_str(), NULL, 16);
+        result += chr;
+    }
+    return result;
+}
+
+string string_to_hex(string str) {
+    string result;
+    for (int i = 0; i < str.length(); i++) {
+        char byte[3];
+        sprintf(byte, "%02x", str[i]);
+        result += byte;
+    }
+    return result;
+}
+
+string xor_encrypt(string str, string key) {
+    for (int i = 0; i < str.length(); i++) {
+        str[i] ^= key[i % key.length()];
+    }
+    return string_to_hex(str);
+}
+
+string xor_decrypt(string hex, string key) {
+    string str = hex_to_string(hex);
+    for (int i = 0; i < str.length(); i++) {
+        str[i] ^= key[i % key.length()];
+    }
+    return str;
+}
+
+int main() {
+    string key = "123456";
+    string plaintext,ciphertext;
+    int choice;
+    while (1) {
+        cout << "1. Encrypt" << endl;
+        cout << "2. Decrypt" << endl;
+        cout << "3. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        switch (choice) {
+            case 1:
+                cout << "Enter plain text: ";
+                cin >> plaintext;
+                ciphertext = xor_encrypt(plaintext, key);
+                cout << "Encrypted text: " << ciphertext << endl;
+                break;
+            case 2:
+                cout << "Enter encrypted text: ";
+                cin >> ciphertext;
+                plaintext = xor_decrypt(ciphertext, key);
+                cout << "Decrypted text: " << plaintext << endl;
+                break;
+            case 3:
+                exit(0);
+                break;
+            default:
+                cout << "Invalid choice. Please try again." << endl;
+                break;
+        }
+    }
+    return 0;
+}
